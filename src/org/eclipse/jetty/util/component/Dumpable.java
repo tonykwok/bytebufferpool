@@ -22,15 +22,12 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.eclipse.jetty.util.StringUtil;
-import org.eclipse.jetty.util.annotation.ManagedObject;
-import org.eclipse.jetty.util.annotation.ManagedOperation;
 
-@ManagedObject("Dumpable Object")
 public interface Dumpable
 {
     String KEY = "key: +- bean, += managed, +~ unmanaged, +? auto, +: iterable, +] array, +@ map, +> undefined";
 
-    @ManagedOperation(value = "Dump the nested Object state as a String", impact = "INFO")
+    /** Return dump the nested Object state as a String */
     default String dump()
     {
         return dump(this);

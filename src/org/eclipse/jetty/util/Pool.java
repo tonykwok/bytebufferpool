@@ -26,8 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.eclipse.jetty.util.annotation.ManagedAttribute;
-import org.eclipse.jetty.util.annotation.ManagedObject;
 import org.eclipse.jetty.util.component.Dumpable;
 import org.eclipse.jetty.util.component.DumpableCollection;
 import org.eclipse.jetty.util.thread.AutoLock;
@@ -41,7 +39,6 @@ import org.eclipse.jetty.util.thread.AutoLock;
  *
  * @param <T> the type of the pooled objects
  */
-@ManagedObject
 public class Pool<T> implements AutoCloseable, Dumpable
 {
     private static final String TAG = Pool.class.getSimpleName();
@@ -133,7 +130,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
     /**
      * @return the number of reserved entries
      */
-    @ManagedAttribute("The number of reserved entries")
     public int getReservedCount()
     {
         return (int)entries.stream().filter(Entry::isReserved).count();
@@ -142,7 +138,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
     /**
      * @return the number of idle entries
      */
-    @ManagedAttribute("The number of idle entries")
     public int getIdleCount()
     {
         return (int)entries.stream().filter(Entry::isIdle).count();
@@ -151,7 +146,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
     /**
      * @return the number of in-use entries
      */
-    @ManagedAttribute("The number of in-use entries")
     public int getInUseCount()
     {
         return (int)entries.stream().filter(Entry::isInUse).count();
@@ -160,7 +154,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
     /**
      * @return the number of closed entries
      */
-    @ManagedAttribute("The number of closed entries")
     public int getClosedCount()
     {
         return (int)entries.stream().filter(Entry::isClosed).count();
@@ -169,7 +162,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
     /**
      * @return the maximum number of entries
      */
-    @ManagedAttribute("The maximum number of entries")
     public int getMaxEntries()
     {
         return maxEntries;
@@ -179,7 +171,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
      * @return the default maximum multiplex count of entries
      * @deprecated Multiplex functionalities will be removed
      */
-    @ManagedAttribute("The default maximum multiplex count of entries")
     @Deprecated
     public int getMaxMultiplex()
     {
@@ -229,7 +220,6 @@ public class Pool<T> implements AutoCloseable, Dumpable
      * @return the default maximum usage count of entries
      * @deprecated MaxUsage functionalities will be removed
      */
-    @ManagedAttribute("The default maximum usage count of entries")
     @Deprecated
     public int getMaxUsageCount()
     {

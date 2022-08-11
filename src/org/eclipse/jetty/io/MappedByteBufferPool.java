@@ -25,8 +25,6 @@ import java.util.function.Function;
 
 import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Logger;
-import org.eclipse.jetty.util.annotation.ManagedAttribute;
-import org.eclipse.jetty.util.annotation.ManagedObject;
 import org.eclipse.jetty.util.component.Dumpable;
 import org.eclipse.jetty.util.component.DumpableCollection;
 
@@ -36,7 +34,6 @@ import org.eclipse.jetty.util.component.DumpableCollection;
  * queue of ByteBuffers each of capacity 1024, the Map entry with key {@code 2} holds a
  * queue of ByteBuffers each of capacity 2048, and so on.</p>
  */
-@ManagedObject
 public class MappedByteBufferPool extends AbstractByteBufferPool implements Dumpable
 {
     private static final String LOG = MappedByteBufferPool.class.getSimpleName();
@@ -228,13 +225,13 @@ public class MappedByteBufferPool extends AbstractByteBufferPool implements Dump
         return bucket * getCapacityFactor();
     }
 
-    @ManagedAttribute("The number of pooled direct ByteBuffers")
+    /** Return the number of pooled direct ByteBuffers */
     public long getDirectByteBufferCount()
     {
         return getByteBufferCount(true);
     }
 
-    @ManagedAttribute("The number of pooled heap ByteBuffers")
+    /** Return the number of pooled heap ByteBuffers */
     public long getHeapByteBufferCount()
     {
         return getByteBufferCount(false);

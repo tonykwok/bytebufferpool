@@ -15,16 +15,12 @@ package org.eclipse.jetty.util.component;
 
 import java.util.EventListener;
 
-import org.eclipse.jetty.util.annotation.ManagedObject;
-import org.eclipse.jetty.util.annotation.ManagedOperation;
-
 /**
- * The lifecycle interface for generic components.
+ * The lifecycle interface for generic (startable) components.
  * <br>
  * Classes implementing this interface have a defined life cycle
  * defined by the methods of this interface.
  */
-@ManagedObject("Lifecycle Interface for startable components")
 public interface LifeCycle
 {
     /**
@@ -35,7 +31,6 @@ public interface LifeCycle
      * @see #stop()
      * @see #isFailed()
      */
-    @ManagedOperation(value = "Starts the instance", impact = "ACTION")
     void start()
         throws Exception;
 
@@ -71,7 +66,6 @@ public interface LifeCycle
      * @see #start()
      * @see #isFailed()
      */
-    @ManagedOperation(value = "Stops the instance", impact = "ACTION")
     void stop()
         throws Exception;
 

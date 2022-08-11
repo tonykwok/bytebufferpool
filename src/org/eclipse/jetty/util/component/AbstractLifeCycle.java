@@ -21,14 +21,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.jetty.util.Logger;
 import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.Uptime;
-import org.eclipse.jetty.util.annotation.ManagedAttribute;
-import org.eclipse.jetty.util.annotation.ManagedObject;
 import org.eclipse.jetty.util.thread.AutoLock;
 
 /**
  * Basic implementation of the life cycle interface for components.
  */
-@ManagedObject("Abstract Implementation of LifeCycle")
 public abstract class AbstractLifeCycle implements LifeCycle
 {
     private static final String TAG = AbstractLifeCycle.class.getSimpleName();
@@ -219,7 +216,7 @@ public abstract class AbstractLifeCycle implements LifeCycle
         return _eventListener.remove(listener);
     }
 
-    @ManagedAttribute(value = "Lifecycle State for this instance", readonly = true)
+    /** Return the lifecycle State for this instance */
     public String getState()
     {
         return _state.toString();

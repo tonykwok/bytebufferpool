@@ -27,8 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.jetty.util.Logger;
 import org.eclipse.jetty.util.MultiException;
-import org.eclipse.jetty.util.annotation.ManagedObject;
-import org.eclipse.jetty.util.annotation.ManagedOperation;
 
 /**
  * A ContainerLifeCycle is an {@link LifeCycle} implementation for a collection of contained beans.
@@ -75,7 +73,6 @@ import org.eclipse.jetty.util.annotation.ManagedOperation;
  *   +? referenced AUTO object that could become MANAGED or UNMANAGED.
  * </pre>
  */
-@ManagedObject("Implementation of Container and LifeCycle")
 public class ContainerLifeCycle extends AbstractLifeCycle implements Container, Destroyable, Dumpable.DumpableContainer
 {
     private static final String TAG = ContainerLifeCycle.class.getSimpleName();
@@ -698,7 +695,6 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
      *
      * @see #dump()
      */
-    @ManagedOperation("Dump the object to stderr")
     public void dumpStdErr()
     {
         try
@@ -712,8 +708,10 @@ public class ContainerLifeCycle extends AbstractLifeCycle implements Container, 
         }
     }
 
+    /**
+     * Dump the object to a string
+     */
     @Override
-    @ManagedOperation("Dump the object to a string")
     public String dump()
     {
         return Dumpable.dump(this);
