@@ -110,9 +110,9 @@ public interface Dumpable
                 s = StringUtil.replace(s, '\n', '|');
             }
 
-            if (o instanceof LifeCycle)
-                out.append(s).append(" - ").append((AbstractLifeCycle.getState((LifeCycle)o))).append("\n");
-            else
+//            if (o instanceof LifeCycle)
+//                out.append(s).append(" - ").append((AbstractLifeCycle.getState((LifeCycle)o))).append("\n");
+//            else
                 out.append(s).append("\n");
         }
         catch (Throwable th)
@@ -129,7 +129,7 @@ public interface Dumpable
      * @param out the Appendable to dump to
      * @param indent The indent to apply after any new lines
      * @param object The object to dump. If the object is an instance
-     * of {@link Container}, {@link Stream}, {@link Iterable}, {@link Array} or {@link Map},
+     * of {@link Stream}, {@link Iterable}, {@link Array} or {@link Map},
      * then children of the object a recursively dumped.
      * @param extraChildren Items to be dumped as children of the object, in addition to any discovered children of object
      * @throws IOException May be thrown by the Appendable
@@ -144,11 +144,11 @@ public interface Dumpable
             object = ((Stream)object).toArray();
         if (object instanceof Array)
             object = Arrays.asList((Object[])object);
-
-        if (object instanceof Container)
-        {
-            dumpContainer(out, indent, (Container)object, extras == 0);
-        }
+// TONY-Change: remove Container
+//        if (object instanceof Container)
+//        {
+//            dumpContainer(out, indent, (Container)object, extras == 0);
+//        }
         if (object instanceof Iterable)
         {
             dumpIterable(out, indent, (Iterable<?>)object, extras == 0);
@@ -173,59 +173,7 @@ public interface Dumpable
                 dumpObjects(out, nextIndent, item);
         }
     }
-    
-    static void dumpContainer(Appendable out, String indent, Container object, boolean last) throws IOException
-    {
-        Container container = object;
-        ContainerLifeCycle containerLifeCycle = container instanceof ContainerLifeCycle ? (ContainerLifeCycle)container : null;
-        for (Iterator<Object> i = container.getBeans().iterator(); i.hasNext(); )
-        {
-            Object bean = i.next();
 
-            if (container instanceof DumpableContainer && !((DumpableContainer)container).isDumpable(bean))
-                continue; //won't be dumped as a child bean
-
-            String nextIndent = indent + ((i.hasNext() || !last) ? "|  " : "   ");
-            if (bean instanceof LifeCycle)
-            {
-                if (container.isManaged(bean))
-                {
-                    out.append(indent).append("+= ");
-                    if (bean instanceof Dumpable)
-                        ((Dumpable)bean).dump(out, nextIndent);
-                    else
-                        dumpObjects(out, nextIndent, bean);
-                }
-                else if (containerLifeCycle != null && containerLifeCycle.isAuto(bean))
-                {
-                    out.append(indent).append("+? ");
-                    if (bean instanceof Dumpable)
-                        ((Dumpable)bean).dump(out, nextIndent);
-                    else
-                        dumpObjects(out, nextIndent, bean);
-                }
-                else
-                {
-                    out.append(indent).append("+~ ");
-                    dumpObject(out, bean);
-                }
-            }
-            else if (containerLifeCycle != null && containerLifeCycle.isUnmanaged(bean))
-            {
-                out.append(indent).append("+~ ");
-                dumpObject(out, bean);
-            }
-            else
-            {
-                out.append(indent).append("+- ");
-                if (bean instanceof Dumpable)
-                    ((Dumpable)bean).dump(out, nextIndent);
-                else
-                    dumpObjects(out, nextIndent, bean);
-            }
-        }
-    }
-    
     static void dumpIterable(Appendable out, String indent, Iterable<?> iterable, boolean last) throws IOException
     {
         for (Iterator i = iterable.iterator(); i.hasNext(); )

@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Buffer utility methods.
@@ -1107,13 +1108,50 @@ public class BufferUtil
         {
             out.append('T');
             byte[] array = buffer.array();
-            TypeUtil.toHex(array[0], out);
-            TypeUtil.toHex(array[1], out);
-            TypeUtil.toHex(array[2], out);
-            TypeUtil.toHex(array[3], out);
+            toHex(array[0], out);
+            toHex(array[1], out);
+            toHex(array[2], out);
+            toHex(array[3], out);
         }
         else
             out.append(Integer.toHexString(System.identityHashCode(buffer)));
+    }
+
+    public static void toHex(int value, Appendable buf) throws IOException
+    {
+        int d = 0xf & ((0xF0000000 & value) >> 28);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & ((0x0F000000 & value) >> 24);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & ((0x00F00000 & value) >> 20);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & ((0x000F0000 & value) >> 16);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & ((0x0000F000 & value) >> 12);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & ((0x00000F00 & value) >> 8);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & ((0x000000F0 & value) >> 4);
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        d = 0xf & value;
+        buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+
+        Integer.toString(0, 36);
+    }
+
+    public static void toHex(byte b, Appendable buf)
+    {
+        try
+        {
+            int d = 0xf & ((0xF0 & b) >> 4);
+            buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+            d = 0xf & b;
+            buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -1188,7 +1226,7 @@ public class BufferUtil
         else if (b == '\t')
             buf.append("\\t");
         else
-            buf.append("\\x").append(TypeUtil.toHexString(b));
+            buf.append("\\x").append(StringUtil.toHexString(b));
     }
 
     /**
@@ -1206,7 +1244,7 @@ public class BufferUtil
         buf.append("b[").append(buffer.remaining()).append("]=");
         for (int i = buffer.position(); i < buffer.limit(); i++)
         {
-            TypeUtil.toHex(buffer.get(i), buf);
+            toHex(buffer.get(i), buf);
             if (i == buffer.position() + 24 && buffer.limit() > buffer.position() + 32)
             {
                 buf.append("...");
@@ -1226,7 +1264,7 @@ public class BufferUtil
     {
         if (buffer == null)
             return "null";
-        return TypeUtil.toHexString(toArray(buffer));
+        return StringUtil.toHexString(toArray(buffer));
     }
 
     private static final int[] decDivisors =

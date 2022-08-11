@@ -272,7 +272,25 @@ public class Pool<T> implements AutoCloseable, Dumpable
         }
 
         // Iterate the copy and close the collected entries.
-        copy.forEach(IO::close);
+        copy.forEach(Pool::close);
+    }
+
+    /**
+     * Closes an arbitrary closable, and logs exceptions at ignore level
+     *
+     * @param closeable the closeable to close
+     */
+    public static void close(Closeable closeable)
+    {
+        try
+        {
+            if (closeable != null)
+                closeable.close();
+        }
+        catch (IOException ignore)
+        {
+            Logger.trace("IGNORED", ignore);
+        }
     }
 
     /**
@@ -517,7 +535,7 @@ public class Pool<T> implements AutoCloseable, Dumpable
             if (removed)
             {
                 if (entry.pooled instanceof Closeable)
-                    IO.close((Closeable)entry.pooled);
+                    close((Closeable)entry.pooled);
             }
             else
             {

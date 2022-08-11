@@ -13,6 +13,7 @@
 
 package org.eclipse.jetty.util;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -38,43 +39,8 @@ public class StringUtil
     public static final String __UTF8 = "utf-8";
     public static final String __UTF16 = "utf-16";
 
-    private static final Index<String> CHARSETS = new Index.Builder<String>()
-        .caseSensitive(false)
-        .with("utf-8", __UTF8)
-        .with("utf8", __UTF8)
-        .with("utf-16", __UTF16)
-        .with("utf16", __UTF16)
-        .with("iso-8859-1", __ISO_8859_1)
-        .with("iso_8859_1", __ISO_8859_1)
-        .build();
 
-    /**
-     * Convert alternate charset names (eg utf8) to normalized
-     * name (eg UTF-8).
-     *
-     * @param s the charset to normalize
-     * @return the normalized charset (or null if normalized version not found)
-     */
-    public static String normalizeCharset(String s)
-    {
-        String n = CHARSETS.get(s);
-        return (n == null) ? s : n;
-    }
 
-    /**
-     * Convert alternate charset names (eg utf8) to normalized
-     * name (eg UTF-8).
-     *
-     * @param s the charset to normalize
-     * @param offset the offset in the charset
-     * @param length the length of the charset in the input param
-     * @return the normalized charset (or null if not found)
-     */
-    public static String normalizeCharset(String s, int offset, int length)
-    {
-        String n = CHARSETS.get(s, offset, length);
-        return (n == null) ? s.substring(offset, offset + length) : n;
-    }
 
     // @checkstyle-disable-check : IllegalTokenTextCheck
     private static final char[] LOWERCASES =
@@ -750,11 +716,6 @@ public class StringUtil
         return false;
     }
 
-    public static boolean isUTF8(String charset)
-    {
-        return __UTF8.equalsIgnoreCase(charset) || __UTF8.equalsIgnoreCase(normalizeCharset(charset));
-    }
-
     public static boolean isHex(String str, int offset, int length)
     {
         if (offset + length > str.length())
@@ -841,10 +802,25 @@ public class StringUtil
             else
             {
                 buf.append("0x");
-                TypeUtil.toHex(b[i], buf);
+                toHex(b[i], buf);
             }
         }
         return buf.toString();
+    }
+
+    public static void toHex(byte b, Appendable buf)
+    {
+        try
+        {
+            int d = 0xf & ((0xF0 & b) >> 4);
+            buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+            d = 0xf & b;
+            buf.append((char)((d > 9 ? ('A' - 10) : '0') + d));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     public static byte[] getBytes(String s)
